@@ -1,0 +1,9 @@
+markdown
+# *Medicago trunctula 
+
+links 
+Fasta file genome
+https://figshare.com/ndownloader/files/56630867
+
+Fasta and gtf file 
+https://figshare.com/ndownloader/articles/29665022/versions/3?folder_path=Medicago_gene_anno_newVersion
