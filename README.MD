@@ -147,31 +147,28 @@ Unzip the `Test_input.zip`
 unzip Test_input.zip
 ```
 
-Move into `Test_input/reference`, and unzip the `.gtf.zip` and `.fa.zip` files.
+Move into `Test_input`, in the reference directory unzip the `.gtf.zip` and `.fa.zip` files.
 
 ```bash
-cd Test_input/reference
-unzip R108_T2T.v3.0_fa.zip
-unzip R108_T2T.v3.0_gtf.zip 
-rm R108_T2T.v3.0_fa.zip
-rm R108_T2T.v3.0_gtf.zip
+cd Test_input
+unzip reference/R108_T2T.v3.0_fa.zip
+unzip reference/R108_T2T.v3.0_gtf.zip 
 ```
 
 Do not change directory. Move the reference and raw_data folders into `V3_T2T_R108_nodule_transcriptome/`
 
 ```bash
-cd ../
 mv raw_data ../
 mv reference ../
-cd ../
-rm -r Test_input Test_input.zip
 ```
 ---
 
 ## Usage
 1. **Run the repository**
-Stay in the base directory `V3_T2T_R108_nodule_transcriptome/` and run the two commands separately. Check your system and run the second command with the appropriate number of threads. Recommend to use 1-2 threads less than 
-the system has. 
+Stay in the base directory `V3_T2T_R108_nodule_transcriptome/` and run the two commands separately. Check your system and run the second command with the appropriate number of threads. Recommend to use 1-2 threads less than the system has. 
+WARNING: If using a Apple silicon device use method B. 
+
+Method A, Linux device:
 
 Build the docker image:
 ```bash
@@ -181,6 +178,22 @@ Run the pipeline:
 ```bash
 STEP=all THREADS=14 IMAGE=txpipe:0.3 ./run_docker.sh
 ```
+
+Method B, Apple silicon device e.g. M1-M5:
+
+On Apple Silicon, Docker defaults to arm64. This repo uses bioinformatics dependencies that are more reliable under linux/amd64, so we run an amd64 image via emulation. 
+
+Build the docker image:
+```bash
+docker buildx build --platform=linux/amd64 --no-cache --load -t txpipe:0.3 -f docker/Dockerfile .
+```
+Run the pipeline:
+```bash
+DOCKER_DEFAULT_PLATFORM=linux/amd64 STEP=all THREADS=14 IMAGE=txpipe:0.3 ./run_docker.sh
+```
+
+Note: the HISAT2 index-building step can require high RAM (observed peaks ~21GB on some systems). If your Mac has 16GB RAM, this step may be killed due to memory limits. In that case, build the HISAT2 index on a higher-memory machine and reuse it locally.
+
 
 The directory and file with the final output gtf is `results/final_gtf/R108_merged_nodule_filtered.gtf`
 
